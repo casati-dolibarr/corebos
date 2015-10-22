@@ -1352,42 +1352,40 @@ class CRMEntity {
 		global $adb;
 		//when we configure the invoice number in Settings this will be used
 		if ($mode == "configure" && $req_no != '') {
-			$check = $adb->pquery("select current from vtiger_autonumberprefix where semodule=? and prefix = ?", array($module, $req_str));
+			list($mode, $module, $req_str, $req_no, $result, $returnResult) = cbEventHandler::do_filter('corebos.filter.ModuleSeqNumber.set', array($mode, $module, $req_str, $req_no, $result, false));
+			if ($returnResult) return $result;
+			$check = $adb->pquery("select cur_id from vtiger_modentity_num where semodule=? and prefix = ?", array($module, $req_str));
 			if ($adb->num_rows($check) == 0) {
-				$focus = new AutoNumberPrefix();
-				$focus->id = '';
-				$focus->mode = '';
-				$focus->column_fields['prefix'] =$req_str ;
-				$focus->column_fields['semodule'] =$module ;
-				$focus->column_fields['format'] =$req_no ;
-				$focus->column_fields['active'] =1 ;
-				$focus->column_fields['current'] =$req_no ;
-				$focus->column_fields['default1'] =1 ;
-				$focus->column_fields['assigned_user_id']=1;
-				$focus->save("AutoNumberPrefix");
+				$numid = $adb->getUniqueId("vtiger_modentity_num");
+				$active = $adb->pquery("select num_id from vtiger_modentity_num where semodule=? and active=1", array($module));
+				$adb->pquery("UPDATE vtiger_modentity_num SET active=0 where num_id=?", array($adb->query_result($active, 0, 'num_id')));
+
+				$adb->pquery("INSERT into vtiger_modentity_num values(?,?,?,?,?,?)", array($numid, $module, $req_str, $req_no, $req_no, 1));
 				return true;
 			} else if ($adb->num_rows($check) != 0) {
-				$num_check = $adb->query_result($check, 0, 'current');
+				$num_check = $adb->query_result($check, 0, 'cur_id');
 				if ($req_no < $num_check) {
 					return false;
 				} else {
-					$adb->pquery("UPDATE vtiger_autonumberprefix SET active=0 where active=1 and semodule=?", array($module));
-					$adb->pquery("UPDATE vtiger_autonumberprefix SET current=?, active = 1 where prefix=? and semodule=?", array($req_no, $req_str, $module));
+					$adb->pquery("UPDATE vtiger_modentity_num SET active=0 where active=1 and semodule=?", array($module));
+					$adb->pquery("UPDATE vtiger_modentity_num SET cur_id=?, active = 1 where prefix=? and semodule=?", array($req_no, $req_str, $module));
 					return true;
 				}
 			}
 		} else if ($mode == "increment") {
+			list($mode, $module, $req_str, $req_no, $result, $returnResult) = cbEventHandler::do_filter('corebos.filter.ModuleSeqNumber.increment', array($mode, $module, $req_str, $req_no, $result, false));
+			if ($returnResult) return $result;
 			//when we save new invoice we will increment the invoice id and write
-			$check = $adb->pquery("select current,prefix from vtiger_autonumberprefix where semodule=? and active = 1", array($module));
+			$check = $adb->pquery("select cur_id,prefix from vtiger_modentity_num where semodule=? and active = 1", array($module));
 			$prefix = $adb->query_result($check, 0, 'prefix');
-			$curid = $adb->query_result($check, 0, 'current');
+			$curid = $adb->query_result($check, 0, 'cur_id');
 			$prev_inv_no = $prefix . $curid;
 			$strip = strlen($curid) - strlen($curid + 1);
 			if ($strip < 0)
 				$strip = 0;
 			$temp = str_repeat("0", $strip);
 			$req_no.= $temp . ($curid + 1);
-			$adb->pquery("UPDATE vtiger_autonumberprefix SET current=? where current=? and active=1 AND semodule=?", array($req_no, $curid, $module));
+			$adb->pquery("UPDATE vtiger_modentity_num SET cur_id=? where cur_id=? and active=1 AND semodule=?", array($req_no, $curid, $module));
 			return decode_html($prev_inv_no);
 		}
 	}
