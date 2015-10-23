@@ -9,7 +9,7 @@
  ************************************************************************************/
 global $app_strings, $mod_strings, $current_language, $currentModule, $theme, $adb;
 require_once('Smarty_setup.php');
-require_once("include/events/PrefixEvent.php");
+require_once("modules/AutoNumberPrefix/PrefixEvent.php");
 
 $focus = CRMEntity::getInstance($currentModule);
 $smarty = new vtigerCRM_Smarty();

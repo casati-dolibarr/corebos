@@ -17,7 +17,7 @@ require_once('data/Tracker.php');
 require_once('include/utils/utils.php');
 require_once('include/utils/UserInfoUtil.php');
 require_once("include/Zend/Json.php");
-require_once("include/events/PrefixEvent.php");
+require_once("modules/AutoNumberPrefix/PrefixEvent.php");
 
 class CRMEntity {
 

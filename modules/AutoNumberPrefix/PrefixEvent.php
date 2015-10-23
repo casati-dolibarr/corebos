@@ -59,8 +59,8 @@ class PrefixEvent extends VTEventHandler {
 		}
 		else if($eventName=='corebos.filter.ModuleSeqNumber.get'){
 			$data[0] = $adb->pquery("SELECT prefix, current from vtiger_autonumberprefix where semodule = ? and active=1",array($currentModule));
-			$data[1] = $adb->query_result($mod_seq_string,0,'prefix');
-			$data[2] = $adb->query_result($mod_seq_string,0,'current');
+			$data[1] = $adb->query_result($data[0],0,'prefix');
+			$data[2] = $adb->query_result($data[0],0,'current');
 			$data[3]=false;
 			return $data;
 			
