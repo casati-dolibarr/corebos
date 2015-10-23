@@ -428,9 +428,9 @@ class AutoNumberPrefix extends CRMEntity {
 		global $adb;
 		if($event_type == 'module.postinstall') {	
 			$em = new VTEventsManager($adb);
-			$em->registerHandler('corebos.filter.ModuleSeqNumber.set', 'modules/AutoNumberPrefix/PrefixEvent.php','PrefixEvent');
-			$em->registerHandler('corebos.filter.ModuleSeqNumber.increment', 'modules/AutoNumberPrefix/PrefixEvent.php','PrefixEvent');
-			$em->registerHandler('corebos.filter.ModuleSeqNumber.get', 'modules/AutoNumberPrefix/PrefixEvent.php','PrefixEvent');
+			$em->registerHandler('corebos.filter.ModuleSeqNumber.set', 'include/events/PrefixEvent.php','PrefixEvent');
+			$em->registerHandler('corebos.filter.ModuleSeqNumber.increment', 'include/events/PrefixEvent.php','PrefixEvent');
+			$em->registerHandler('corebos.filter.ModuleSeqNumber.get', 'include/events/PrefixEvent.php','PrefixEvent');
 			$res=$adb->pquery("SELECT num_id,prefix,semodule,start_id,active,cur_id from vtiger_modentity_num");
 			while ($rows=$adb->fetch_array($res)){
 			$focus = new AutoNumberPrefix();

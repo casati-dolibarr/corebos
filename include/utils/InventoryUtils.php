@@ -16,7 +16,6 @@
  *  $num_of_products - no.of products associated with it
  *  $associated_prod = associated product details
  */
-
 function getProductDetailsBlockInfo($mode,$module,$focus='',$num_of_products='',$associated_prod='')
 {
 	global $log;
@@ -49,7 +48,6 @@ function getProductDetailsBlockInfo($mode,$module,$focus='',$num_of_products='',
 	else
 	{
 		$productBlock[] = Array(Array());
-
 	}
 	$log->debug("Exiting getProductDetailsBlockInfo method ...");
 	return $productBlock;
@@ -64,7 +62,6 @@ function getProductDetailsBlockInfo($mode,$module,$focus='',$num_of_products='',
  * Param $module - module name
  * return type void
  */
-
 function updateStk($product_id,$qty,$mode,$ext_prod_arr,$module)
 {
 	global $log, $adb, $current_user;
@@ -336,14 +333,14 @@ function getAllTaxes($available='all', $sh='',$mode='',$id='')
 		}
 		//We are selecting taxes using that taxids. So It will get the tax even if the tax is disabled.
 		$where_ids='';
-			if (count($result_ids) > 0) {
+		if (count($result_ids) > 0) {
 			$insert_str = str_repeat("?,", count($result_ids)-1);
 			$insert_str .= "?";
 			$where_ids="taxid in ($insert_str) or";
 		}
 
-		$res = $adb->pquery("select * from $tablename  where $where_ids  deleted=0 order by taxid",$result_ids);
-		} else {
+		$res = $adb->pquery("select * from $tablename where $where_ids  deleted=0 order by taxid",$result_ids);
+	} else {
 		//This where condition is added to get all products or only availble products
 		$where = '';
 		if ($available != 'all' && $available == 'available') {
