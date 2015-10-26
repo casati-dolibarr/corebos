@@ -125,9 +125,9 @@ class AutoNumberPrefix extends CRMEntity {
 	}
 
 	function save_module($module) {
-		//if ($this->HasDirectImageField) {
-		//	$this->insertIntoAttachment($this->id,$module);
-		//}
+		if ($this->HasDirectImageField) {
+			$this->insertIntoAttachment($this->id,$module);
+		}
 	}
 
 	/**
@@ -424,7 +424,6 @@ class AutoNumberPrefix extends CRMEntity {
 	 */
 	function vtlib_handler($modulename, $event_type) {
 		require_once('include/utils/utils.php');
-		require 'include/events/include.inc';
 		global $adb;
 		if($event_type == 'module.postinstall') {	
 			$em = new VTEventsManager($adb);
@@ -433,7 +432,7 @@ class AutoNumberPrefix extends CRMEntity {
 			$em->registerHandler('corebos.filter.ModuleSeqNumber.get', 'modules/AutoNumberPrefix/PrefixEvent.php','PrefixEvent');
 			$res=$adb->pquery("SELECT num_id,prefix,semodule,start_id,active,cur_id from vtiger_modentity_num");
 			while ($rows=$adb->fetch_array($res)){
-			$focus = new AutoNumberPrefix();
+				$focus = new AutoNumberPrefix();
 				$focus->id ='';
 				$focus->mode = '';
 				$focus->column_fields['prefix'] =$rows['prefix'] ;
