@@ -9,7 +9,6 @@
  ************************************************************************************/
 global $app_strings, $mod_strings, $current_language, $currentModule, $theme, $adb;
 require_once('Smarty_setup.php');
-require_once("modules/AutoNumberPrefix/PrefixEvent.php");
 
 $focus = CRMEntity::getInstance($currentModule);
 $smarty = new vtigerCRM_Smarty();
@@ -121,7 +120,7 @@ $smarty->assign("CALENDAR_DATEFORMAT", parse_calendardate($app_strings['NTC_DATE
 $mod_seq_field = getModuleSequenceField($currentModule);
 if($focus->mode != 'edit' && $mod_seq_field != null) {
 	$autostr = getTranslatedString('MSG_AUTO_GEN_ON_SAVE');
-	list($mod_seq_string, $mod_seq_prefix, $mod_seq_no, $doNative) =  PrefixEvent::handleEvent('corebos.filter.ModuleSeqNumber.get', array('', '', '', true));
+	list($mod_seq_string, $mod_seq_prefix, $mod_seq_no, $doNative) = cbEventHandler::do_filter('corebos.filter.ModuleSeqNumber.get', array('', '', '', true));
 	if ($doNative) {
 		$mod_seq_string = $adb->pquery("SELECT prefix, cur_id from vtiger_modentity_num where semodule = ? and active=1",array($currentModule));
 		$mod_seq_prefix = $adb->query_result($mod_seq_string,0,'prefix');
