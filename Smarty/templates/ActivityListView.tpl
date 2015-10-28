@@ -13,6 +13,7 @@
 <script language="JavaScript" type="text/javascript" src="include/js/general.js"></script>
 <script language="JavaScript" type="text/javascript" src="include/js/ListView.js"></script>
 <script language="JavaScript" type="text/javascript" src="include/js/search.js"></script>
+<script language="JavaScript" type="text/javascript" src="modules/Calendar4You/Calendar4You.js"></script>
 <script language="javascript" type="text/javascript">
 var typeofdata = new Array();
 typeofdata['E'] = ['e','n','s','ew','c','k'];

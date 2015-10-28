@@ -513,7 +513,7 @@ function getITSActFieldCombo($fieldname,$tablename,$from_module = '',$follow_act
 		if ($value == $def) $selected = " selected"; else $selected = "";
 		$combo .= '<option value="'.$value.'"'.$selected.'>'.$label.'</option>';
 	}
-
+	$combo .='<option value="Task">Task</option>';
 	$combo .= '</select>';
 	return $combo;
 }

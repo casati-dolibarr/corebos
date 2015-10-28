@@ -186,7 +186,7 @@ $mod_strings = Array(
 'LBL_ADD_EVENT'=>'Add Event',
 'LBL_ADDCALL'=>'Call',
 'LBL_ADDMEETING'=>'Meeting',
-'LBL_ADDTODO'=>'To Do',
+'LBL_ADDTODO'=>'Add Task',
 'LBL_BEFOREEVENT'=>'before the event starts',
 'LBL_BEFORETASK'=>'before the task starts',
 'LBL_EVENTDETAILS'=>'Event Details',
@@ -219,8 +219,8 @@ $mod_strings = Array(
 'LBL_SDRMD'=>'Send Reminder to',
 'LBL_ENABLE_REPEAT'=>'Enable Repeat',
 'LBL_REPEAT_ONCE'=>'Repeat once in every',
-'LBL_ADD_TODO'=>'Create To Do',
-'LBL_TODONAME'=>'To Do',
+'LBL_ADD_TODO'=>'Create Task',
+'LBL_TODONAME'=>'Task',
 'LBL_TODODATETIME'=>'Time & Date',
 
 

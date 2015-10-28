@@ -19,13 +19,53 @@ require_once('include/ListView/ListView.php');
 require_once('include/utils/utils.php');
 require_once('modules/CustomView/CustomView.php');
 require_once('modules/Calendar/CalendarCommon.php');
+include_once("modules/Calendar4You/CalendarUtils.php"); 
+include_once("modules/Calendar4You/Calendar4You.php");
+require_once("modules/Calendar/Calendar.php");
 
 global $app_strings;
 global $list_max_entries_per_page;
 
 $log = LoggerManager::getLogger('task_list');
 
-global $currentModule,$image_path,$theme,$adb;
+global $app_strings, $mod_strings,$app, $current_language, $currentModule, $theme, $current_user,$image_path, $default_charset;
+
+$Calendar4You = new Calendar4You();
+$Calendar4You->GetDefPermission($current_user->id);
+$Calendar4You->setgoogleaccessparams($current_user->id);
+$Calendar_Settings = $Calendar4You->getSettings();
+$viewBox = 'hourview'; 
+	$hour_startat = timeString(array('hour' => date('H:i', (time() + (5 * 60))), 'minute' => 0), '24');
+	$hour_endat = timeString(array('hour'=>date('H:i',(time() + (60 * 60))),'minute'=>0),'24');
+	$time_arr = getaddITSEventPopupTime($hour_startat,$hour_endat,$Calendar_Settings["hour_format"]);
+	$date = new DateTimeField(null);
+	$temp_date = $date->getDisplayDate();
+	if($current_user->column_fields['is_admin']=='on')
+		$Res = $adb->pquery("select * from vtiger_activitytype",array());
+	else {
+		$roleid=$current_user->roleid;
+		$subrole = getRoleSubordinates($roleid);
+		if(count($subrole)> 0) {
+			$roleids = $subrole;
+			array_push($roleids, $roleid);
+		} else {	
+			$roleids = $roleid;
+		}
+		if (count($roleids) > 1) {
+			$Res=$adb->pquery("select distinct activitytype from vtiger_activitytype inner join vtiger_role2picklist on vtiger_role2picklist.picklistvalueid = vtiger_activitytype.picklist_valueid where roleid in (". generateQuestionMarks($roleids) .") and picklistid in (select picklistid from vtiger_picklist) order by sortid asc", array($roleids));
+		} else {
+			$Res=$adb->pquery("select distinct activitytype from vtiger_activitytype inner join vtiger_role2picklist on vtiger_role2picklist.picklistvalueid = vtiger_activitytype.picklist_valueid where roleid = ? and picklistid in (select picklistid from vtiger_picklist) order by sortid asc", array($roleid));
+		}
+	}
+	$eventlist=''; 
+	$eventlists_array='';
+	for($i=0; $i<$adb->num_rows($Res);$i++) {
+		$actname = $adb->query_result($Res,$i,'activitytype');
+		$eventlist .= html_entity_decode($actname,ENT_QUOTES,$default_charset).";";
+		$eventlists_array .= '"'.html_entity_decode(html_entity_decode($actname,ENT_QUOTES,$default_charset),ENT_QUOTES, $default_charset).'",';
+	}
+$add_javascript = "onMouseOver='fnAddITSEvent(this,\"addEventDropDown\",\"".$tempd_ate."\",\"".$temp_date."\",\"".$time_arr['starthour']."\",\"".$time_arr['startmin']."\",\"".$time_arr['startfmt']."\",\"".$time_arr['endhour']."\",\"".$time_arr['endmin']."\",\"".$time_arr['endfmt']."\",\"".$viewBox."\",\"".$subtab."\",\"".$eventlist."\");'";
+
 
 if (isset($_REQUEST['current_user_only'])) $current_user_only = vtlib_purify($_REQUEST['current_user_only']);
 
@@ -34,6 +74,7 @@ $focus = new Activity();
 $focus->initSortbyField('Calendar');
 // END
 $smarty = new vtigerCRM_Smarty;
+$smarty->assign('ADD_ONMOUSEOVER', $add_javascript);
 $other_text = Array();
 
 if(!$_SESSION['lvs'][$currentModule])
@@ -286,4 +327,5 @@ if(isset($_REQUEST['ajax']) && $_REQUEST['ajax'] != '')
 	$smarty->display("ListViewEntries.tpl");
 else
 	$smarty->display("ActivityListView.tpl");
+include_once 'modules/Calendar4You/addEventUI.php';
 ?>

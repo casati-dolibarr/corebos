@@ -273,7 +273,7 @@ function getActFieldCombo($fieldname,$tablename,$follow_activitytype = false)
 		$value = $adb->query_result($Res,$i,$fieldname);
 		$combo .= '<option value="'.$value.'">'.getTranslatedString($value).'</option>';
 	}
-
+	$combo .= '<option value="Task">Task</option>';
 	$combo .= '</select>';
 	return $combo;
 }
